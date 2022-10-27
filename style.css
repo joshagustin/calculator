@@ -1,0 +1,93 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  color: hsl(52, 100%, 62%);
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: hsl(268, 75%, 9%);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+}
+
+.keypad {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 400px;
+}
+
+button {
+  flex: 1 1 auto;
+  width: 60px;
+  height: 50px;
+  background-color: hsl(268, 47%, 21%);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px hsl(290, 70%, 36%);
+}
+
+.display,
+.keypad {
+  padding: 20px;
+  background-color: hsl(268, 71%, 12%);
+  border-radius: 5px;
+}
+
+.display {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 40px;
+  height: 70px;
+}
+
+.number,
+.operator {
+  font-size: 32px;
+}
+
+.special {
+  background-color: hsl(281, 89%, 26%);
+  box-shadow: 0 2px hsl(285, 91%, 52%);
+  color: white;
+  font-size: 20px;
+}
+
+.equals {
+  background-color: hsl(176, 100%, 44%);
+  box-shadow: 0 2px hsl(177, 92%, 70%);
+  color: hsl(198, 20%, 13%);
+  font-size: 30px;
+}
+
+.top {
+  font-size: 24px
+}
+
+.operator.add,
+.operator.sub {
+  background-color: #292B75;
+  box-shadow: 0 2px #4b4dd6;
+}
+
+.operator.mul,
+.operator.div {
+  background-color: #1C4F34;
+  box-shadow: 0 2px #3bab6f;
+}
