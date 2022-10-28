@@ -1,9 +1,12 @@
 const numbers = document.querySelectorAll('.number');
 const operators = document.querySelectorAll('.operator');
 const equals = document.querySelector('.equals');
+const clear = document.querySelector('.clear');
+
 numbers.forEach(number => number.addEventListener('click', inputHandler));
 operators.forEach(operator => operator.addEventListener('click', inputHandler));
 equals.addEventListener('click', inputHandler);
+clear.addEventListener('click', clearAll);
 
 const EQUATION_DELIMITERS = /[+x\/\s-]+/;
 let displayValue = '';
@@ -63,6 +66,13 @@ function secondOperandExists() {
     const arr = displayValue.split(EQUATION_DELIMITERS);
     if (arr.length < 2) return false;
     return arr[1].length > 0;
+}
+
+function clearAll() {
+    updateDisplay('');
+    for (key in equation) {
+        equation[key] = null;
+    }
 }
 
 function add(a, b) {
