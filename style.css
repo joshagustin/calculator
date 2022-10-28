@@ -42,6 +42,83 @@ button {
   box-shadow: 0 2px hsl(290, 70%, 36%);
 }
 
+button:hover {
+  background-color: hsl(268, 47%, 16%);
+  cursor: pointer;
+}
+
+button:active {
+  background-color: hsl(268, 47%, 16%);
+  transform: translateY(1px);
+  box-shadow: 0 1px hsl(290, 70%, 36%);
+}
+
+.operator.add,
+.operator.sub {
+  background-color: hsl(238, 48%, 31%);
+  box-shadow: 0 2px #4b4dd6;
+}
+
+.operator.add:hover,
+.operator.sub:hover {
+  background-color: hsl(238, 48%, 26%);
+}
+
+.operator.add:active,
+.operator.sub:active {
+  background-color: hsl(238, 48%, 26%);
+  box-shadow: 0 1px #4b4dd6;
+}
+
+.operator.mul,
+.operator.div {
+  background-color: hsl(148, 48%, 21%);
+  box-shadow: 0 2px #3bab6f;
+}
+
+.operator.mul:hover,
+.operator.div:hover {
+  background-color: hsl(148, 48%, 16%);
+}
+
+.operator.mul:active,
+.operator.div:active {
+  background-color: hsl(148, 48%, 16%);
+  box-shadow: 0 1px #3bab6f;
+}
+
+.special {
+  background-color: hsl(281, 89%, 26%);
+  box-shadow: 0 2px hsl(285, 91%, 52%);
+  color: white;
+  font-size: 20px;
+}
+
+.special:hover {
+  background-color: hsl(282, 89%, 21%);
+}
+
+.special:active {
+  background-color: hsl(282, 89%, 21%);
+  box-shadow: 0 1px hsl(285, 91%, 52%);
+}
+
+.equals {
+  background-color: hsl(176, 100%, 44%);
+  box-shadow: 0 2px hsl(177, 92%, 70%);
+  color: hsl(198, 20%, 13%);
+  font-size: 30px;
+}
+
+.equals:hover {
+  background-color: hsl(176, 100%, 29%);
+}
+
+.equals:active {
+  background-color: hsl(176, 100%, 29%);
+  box-shadow: 0 1px hsl(177, 92%, 70%);
+}
+
 .display,
 .keypad {
   padding: 20px;
@@ -62,32 +139,6 @@ button {
   font-size: 32px;
 }
 
-.special {
-  background-color: hsl(281, 89%, 26%);
-  box-shadow: 0 2px hsl(285, 91%, 52%);
-  color: white;
-  font-size: 20px;
-}
-
-.equals {
-  background-color: hsl(176, 100%, 44%);
-  box-shadow: 0 2px hsl(177, 92%, 70%);
-  color: hsl(198, 20%, 13%);
-  font-size: 30px;
-}
-
 .top {
   font-size: 24px
-}
-
-.operator.add,
-.operator.sub {
-  background-color: #292B75;
-  box-shadow: 0 2px #4b4dd6;
-}
-
-.operator.mul,
-.operator.div {
-  background-color: #1C4F34;
-  box-shadow: 0 2px #3bab6f;
 }
