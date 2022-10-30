@@ -34,15 +34,12 @@ function updateDisplay(str) {
 }
 
 function numberInputHandler() {
-    updateDisplay(displayValue += this.textContent);
+    updateDisplay(displayValue + this.textContent);
 }
 
 function equalsInputHandler() {
-    if (equation.operator && operandExists(2)) {
-        setAndEvaluateEquation(this);
-    }
     // add sign to first operand
-    else if (equation.operator && operatorIsValid() && !operandExists(1)) {
+    if (equation.operator && operatorIsValid() && !operandExists(1)) {
         clearEquation();
         equation.aOperand = Number(displayValue.replaceAll(' ', ''));
         updateDisplay(equation.aOperand.toString());
@@ -66,11 +63,16 @@ function operatorInputHandler() {
         equation.operator = this.classList[1];
         updateDisplay(displayValue.replace(EQUATION_DELIMITERS, this.textContent));
     }
-    // successive operations involving negative operands
-    else if (equation.aOperand < 0 && operandExists(2)) {
+    // successive operations involving negative first operand
+    else if (equation.aOperand < 0 && equation.operator && operandExists(2)) {
         setAndEvaluateEquation(this);
     }
-    // first operand is negative
+    // add operator to equation with negative first operand
+    else if (equation.aOperand < 0) {
+        equation.operator = this.classList[1];
+        updateDisplay(displayValue + this.textContent)
+    } 
+    // sign is attached to first operand
     else if (equation.operator && operatorIsValid() && !operandExists(1)){
         clearEquation();
         equation.aOperand = Number(displayValue.replaceAll(' ', ''));
@@ -81,11 +83,11 @@ function operatorInputHandler() {
     else if (operandExists(1) && operandExists(2)) {
         setAndEvaluateEquation(this);
     }
-    // add operator
+    // add operator to equation
     else {
         equation.aOperand = Number(displayValue.split(EQUATION_DELIMITERS)[0]);
         equation.operator = this.classList[1];
-        updateDisplay(displayValue += this.textContent);
+        updateDisplay(displayValue + this.textContent);
     }
 }
 
