@@ -3,9 +3,9 @@ const operators = document.querySelectorAll('.operator');
 const equals = document.querySelector('.equals');
 const clear = document.querySelector('.clear');
 
-numbers.forEach(number => number.addEventListener('click', inputHandler));
-operators.forEach(operator => operator.addEventListener('click', inputHandler));
-equals.addEventListener('click', inputHandler);
+numbers.forEach(number => number.addEventListener('click', numberInputHandler));
+operators.forEach(operator => operator.addEventListener('click', operatorInputHandler));
+equals.addEventListener('click', equalsInputHandler);
 clear.addEventListener('click', clearAll);
 
 const EQUATION_DELIMITERS = /[+x\/\s-]+/;
@@ -25,6 +25,7 @@ const equation = {
 // number, equals -> number
 // todo add negative + positive
 // todo refactor inputHandler
+// neg number, add operator, evaluate neg number first
 
 function updateDisplay(str) {
     displayValue = str;
@@ -32,39 +33,26 @@ function updateDisplay(str) {
     display.textContent = displayValue;
 }
 
-function inputHandler() {
-    const inputType = this.classList[0];
-    // change operator
-    if (inputType === 'operator' && equation.operator && !operandExists(2)) {
-        equation.operator = this.classList[1];
-        updateDisplay(displayValue.replace(EQUATION_DELIMITERS, this.textContent));
-    }
-    // successive operations
-    else if (inputType === 'operator' && operandExists(2)) {
+function numberInputHandler() {
+    updateDisplay(displayValue += this.textContent);
+}
+
+function equalsInputHandler() {
+    if (equation.operator && operandExists(2)) {
         setAndEvaluateEquation(this);
     }
-    // add operator
-    else if (inputType === 'operator') {
-        equation.aOperand = Number(displayValue.split(EQUATION_DELIMITERS)[0]);
-        equation.operator = this.classList[1];
-        updateDisplay(displayValue += this.textContent);
-    }
-    // increment number
-    else if (inputType === 'number') {
-        updateDisplay(displayValue += this.textContent);
-    }
     // add sign to first operand
-    else if (inputType === 'equals' && equation.operator && operatorIsValid() && !operandExists(1)) {
+    else if (equation.operator && operatorIsValid() && !operandExists(1)) {
         clearEquation();
         equation.aOperand = Number(displayValue.replaceAll(' ', ''));
         updateDisplay(equation.aOperand.toString());
     }
     // lacking second operand
-    else if (inputType === 'equals' && equation.operator && !operandExists(2)) {
+    else if (equation.operator && !operandExists(2)) {
         generateSyntaxError();
     }
     // lacking first operand
-    else if (inputType === 'equals' && equation.operator && !operandExists(1)) {
+    else if (equation.operator && !operandExists(1)) {
         generateSyntaxError();
     }
     else {
@@ -72,10 +60,45 @@ function inputHandler() {
     }
 }
 
+function operatorInputHandler() {
+     // change operator
+     if (equation.operator && !operandExists(2)) {
+        equation.operator = this.classList[1];
+        updateDisplay(displayValue.replace(EQUATION_DELIMITERS, this.textContent));
+    }
+    // successive operations involving negative operands
+    else if (equation.aOperand < 0 && operandExists(2)) {
+        setAndEvaluateEquation(this);
+    }
+    // first operand is negative
+    else if (equation.operator && operatorIsValid() && !operandExists(1)){
+        clearEquation();
+        equation.aOperand = Number(displayValue.replaceAll(' ', ''));
+        equation.operator = this.classList[1];
+        updateDisplay(equation.aOperand.toString() + this.textContent);
+    } 
+    // successive operations
+    else if (operandExists(1) && operandExists(2)) {
+        setAndEvaluateEquation(this);
+    }
+    // add operator
+    else {
+        equation.aOperand = Number(displayValue.split(EQUATION_DELIMITERS)[0]);
+        equation.operator = this.classList[1];
+        updateDisplay(displayValue += this.textContent);
+    }
+}
+
 function setAndEvaluateEquation(node) {
-    equation.bOperand = Number(displayValue.split(EQUATION_DELIMITERS)[1]);
+    if (getEquationLength() > 2) {
+        equation.bOperand = Number(displayValue.split(EQUATION_DELIMITERS)[2]);
+    }
+    else {
+        equation.bOperand = Number(displayValue.split(EQUATION_DELIMITERS)[1]);
+    }
     const result = operate(equation.operator, equation.aOperand, equation.bOperand);
     equation.aOperand = result;
+    // successive operations
     if (node.classList[0] === 'operator') {
         equation.operator = node.classList[1];
         updateDisplay(result.toString() + node.textContent);
@@ -86,17 +109,23 @@ function setAndEvaluateEquation(node) {
     } 
 }
 
+// determines result based on displayValue 
 function operandExists(option) {
     const arr = displayValue.split(EQUATION_DELIMITERS);
+    let index = arr.length > 2 ? 1 : 0;
     if (option === 1) {
-        return arr[0].length > 0;        
+        return arr[index].length > 0;        
     }
     if (arr.length < 2) return false;
-    return arr[1].length > 0;
+    return arr[index + 1].length > 0;
 }
 
 function operatorIsValid() {
     return equation.operator === 'add' || equation.operator === 'sub';
+}
+
+function getEquationLength() {
+    return displayValue.split(EQUATION_DELIMITERS).length;
 }
 
 function clearAll() {
