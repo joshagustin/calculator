@@ -2,123 +2,46 @@ const numbers = document.querySelectorAll('.number');
 const operators = document.querySelectorAll('.operator');
 const equals = document.querySelector('.equals');
 const clear = document.querySelector('.clear');
+const negate = document.querySelector('.negate');
 
-numbers.forEach(number => number.addEventListener('click', numberInputHandler));
-operators.forEach(operator => operator.addEventListener('click', operatorInputHandler));
-equals.addEventListener('click', equalsInputHandler);
+numbers.forEach(number => number.addEventListener('click', numberHandler));
+negate.addEventListener('click', negateNumber);
 clear.addEventListener('click', clearAll);
 
-const EQUATION_DELIMITERS = /[+x\/-]+/;
+const EQUATION_DELIMITERS = /[+×÷−]+/;
 let displayValue = '';
 const equation = {
     operator: null,
     aOperand: null,
     bOperand: null,
 };
-// number
-// operator, change
-// operator, regular
-// operator, sign
-// operator, successive 
-// num, operator, equals -> syntax
-// operator, num, equals -> conditional syntax
-// number, equals -> number
-// todo add negative + positive
-// todo refactor inputHandler
-// neg number, add operator, evaluate neg number first
+
+function numberHandler() {
+    updateDisplay(displayValue + this.textContent);
+}
+
+function negateNumber() {
+    const equationOperator = displayValue.split(/[0-9.]+/);
+    const arr = displayValue.split(EQUATION_DELIMITERS);
+    const arrLen = arr.length;
+    if (arrLen === 2) {
+        equation.bOperand = Number(arr[1]) * -1;
+        arr[1] = equation.bOperand.toString();
+    }
+    else if (arrLen === 1) {
+        equation.aOperand = Number(arr[0]) * -1;
+        arr[0] = equation.aOperand.toString();
+    }
+
+    displayValue = arrLen === 2 ?
+        arr[0] + equationOperator + arr[1] : arr[0];
+    updateDisplay (displayValue)
+}
 
 function updateDisplay(str) {
     displayValue = str;
     const display = document.querySelector('.display');
     display.textContent = displayValue;
-}
-
-function numberInputHandler() {
-    updateDisplay(displayValue + this.textContent);
-}
-
-function equalsInputHandler() {
-    // add sign to first operand
-    if (equation.operator && operatorIsValid() && !operandExists(1)) {
-        clearEquation();
-        equation.aOperand = Number(displayValue.replaceAll(' ', ''));
-        updateDisplay(equation.aOperand.toString());
-    }
-    // lacking second operand
-    else if (equation.operator && !operandExists(2)) {
-        generateSyntaxError();
-    }
-    // lacking first operand
-    else if (equation.operator && !operandExists(1)) {
-        generateSyntaxError();
-    }
-    else {
-        setAndEvaluateEquation(this);
-    }
-}
-
-function operatorInputHandler() {
-    const operatorType = this.classList[1];
-    const operatorSymbol = this.textContent;
-    // set second operand to negative
-    if (equation.operator && !operatorIsValid() && operatorType === 'sub') {
-        operatorType = equation.operator;
-    }
-    // change operator 
-    else if (equation.operator && !operandExists(2)) {
-        displayValue = displayValue.slice(0, -1);
-    }
-    // successive operations involving negative first operand
-    else if (equation.aOperand < 0 && equation.operator && operandExists(2)) {
-        setAndEvaluateEquation(this);
-    }
-    // attach sign to first operand
-    else if (equation.operator && operatorIsValid() && !operandExists(1)){
-        clearEquation();
-        equation.aOperand = Number(displayValue);
-    } 
-    // successive operations
-    else if (operandExists(1) && operandExists(2)) {
-        setAndEvaluateEquation(this);
-    }
-    // add operator to equation
-    else if (!equation.aOperand) {
-        equation.aOperand = Number(displayValue.split(EQUATION_DELIMITERS)[0]);
-    }
-    equation.operator = operatorType;
-    updateDisplay(displayValue + operatorSymbol);
-}
-
-function setAndEvaluateEquation(node) {
-    if (getEquationLength() > 2) {
-        equation.bOperand = Number(displayValue.split(EQUATION_DELIMITERS)[2]);
-    }
-    else {
-        equation.bOperand = Number(displayValue.split(EQUATION_DELIMITERS)[1]);
-    }
-    const result = operate(equation.operator, equation.aOperand, equation.bOperand);
-    equation.aOperand = result;
-    equation.operator = null;
-    updateDisplay(result.toString());
-}
-
-// determines result based on displayValue 
-function operandExists(option) {
-    const arr = displayValue.split(EQUATION_DELIMITERS);
-    let index = arr.length > 2 ? 1 : 0;
-    if (option === 1) {
-        return arr[index].length > 0;        
-    }
-    if (arr.length < 2) return false;
-    return arr[index + 1].length > 0;
-}
-
-function operatorIsValid() {
-    return equation.operator === 'add' || equation.operator === 'sub';
-}
-
-function getEquationLength() {
-    return displayValue.split(EQUATION_DELIMITERS).length;
 }
 
 function clearAll() {

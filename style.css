@@ -135,7 +135,8 @@ button:active {
 }
 
 .number,
-.operator {
+.operator,
+.negate {
   font-size: 32px;
 }
 
