@@ -6,6 +6,7 @@ const negate = document.querySelector('.negate');
 
 numbers.forEach(number => number.addEventListener('click', numberHandler));
 operators.forEach(operator => operator.addEventListener('click', operatorHandler));
+equals.addEventListener('click', equalsHandler);
 negate.addEventListener('click', negateNumber);
 clear.addEventListener('click', clearAll);
 
@@ -40,6 +41,20 @@ function operatorHandler() {
     updateDisplay(displayValue + operatorSymbol);
 }
 
+function equalsHandler() {
+    if (operandExists('first') && operandExists('second')) {
+        evaluateEquation();
+    } 
+    else if (operandExists('first') && equation.operator) {
+        generateSyntaxError();
+    }
+    else if (!operandExists('first') && operandExists('second') && equation.operator === 'sub') {
+        clearEquation();
+        equation.aOperand = Number(displayValue.split(EQUATION_DELIMITERS)[1] * -1);
+        updateDisplay(equation.aOperand.toString());
+    }
+}
+
 function evaluateEquation() {
     const arr = displayValue.split(EQUATION_DELIMITERS);
     equation.aOperand = Number(arr[0]);
@@ -54,11 +69,15 @@ function negateNumber() {
     const operatorArr = displayValue.split(/[0-9.-]+/);
     const arr = displayValue.split(EQUATION_DELIMITERS);
     const arrLen = arr.length;
-    if (arrLen === 2) {
+    if (!operandExists('first') || equation.operator && !operandExists('second')) {
+        generateSyntaxError();
+        return
+    }
+    else if (arrLen === 2) {
         equation.bOperand = Number(arr[1]) * -1;
         arr[1] = equation.bOperand.toString();
     }
-    else if (arrLen === 1) {
+    else {
         equation.aOperand = Number(arr[0]) * -1;
         arr[0] = equation.aOperand.toString();
     }
@@ -77,7 +96,7 @@ function updateDisplay(str) {
 function operandExists(option) {
     const arr = displayValue.split(EQUATION_DELIMITERS);
     if (option === 'first') {
-        return arr[0].length;
+        return arr[0].length > 0;
     }
     if (arr.length < 2) return false;
     return arr[1].length > 0;
