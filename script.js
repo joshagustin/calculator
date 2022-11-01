@@ -3,6 +3,7 @@ const operators = document.querySelectorAll('.operator');
 const equals = document.querySelector('.equals');
 const clear = document.querySelector('.clear');
 const negate = document.querySelector('.negate');
+const toggle = document.querySelector('input');
 
 numbers.forEach(number => number.addEventListener('click', numberHandler));
 operators.forEach(operator => operator.addEventListener('click', operatorHandler));
@@ -10,10 +11,16 @@ equals.addEventListener('click', equalsHandler);
 negate.addEventListener('click', negateNumber);
 clear.addEventListener('click', clearHandler);
 window.addEventListener('keydown', keyHandler);
+toggle.addEventListener('click', changeTheme);
 
 const EQUATION_DELIMITERS = /[+×÷−]+/;
 let displayValue = '';
 let enableClearAll = false;
+
+function changeTheme() {
+    const nodes = document.querySelectorAll('*');
+    nodes.forEach(node => node.classList.toggle('theme-1'));
+}
 
 function keyHandler(e) {
     const value = e.keyCode;

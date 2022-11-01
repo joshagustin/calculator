@@ -43,14 +43,14 @@ button {
 }
 
 button:hover {
-  background-color: hsl(268, 47%, 16%);
+  background-color: hsl(268, 47%, 31%);
   cursor: pointer;
 }
 
 button:active {
-  background-color: hsl(268, 47%, 16%);
-  transform: translateY(1px);
+  background-color: hsl(268, 47%, 31%);
   box-shadow: 0 1px hsl(290, 70%, 36%);
+  transform: translateY(1px);
 }
 
 .operator.add,
@@ -61,12 +61,12 @@ button:active {
 
 .operator.add:hover,
 .operator.sub:hover {
-  background-color: hsl(238, 48%, 26%);
+  background-color: hsl(238, 48%, 41%);
 }
 
 .operator.add:active,
 .operator.sub:active {
-  background-color: hsl(238, 48%, 26%);
+  background-color: hsl(238, 48%, 41%);
   box-shadow: 0 1px #4b4dd6;
 }
 
@@ -78,12 +78,12 @@ button:active {
 
 .operator.mul:hover,
 .operator.div:hover {
-  background-color: hsl(148, 48%, 16%);
+  background-color: hsl(148, 48%, 31%);
 }
 
 .operator.mul:active,
 .operator.div:active {
-  background-color: hsl(148, 48%, 16%);
+  background-color: hsl(148, 48%, 31%);
   box-shadow: 0 1px #3bab6f;
 }
 
@@ -95,11 +95,11 @@ button:active {
 }
 
 .special:hover {
-  background-color: hsl(282, 89%, 21%);
+  background-color: hsl(282, 89%, 36%);
 }
 
 .special:active {
-  background-color: hsl(282, 89%, 21%);
+  background-color: hsl(282, 89%, 36%);
   box-shadow: 0 1px hsl(285, 91%, 52%);
 }
 
@@ -111,11 +111,11 @@ button:active {
 }
 
 .equals:hover {
-  background-color: hsl(176, 100%, 29%);
+  background-color: hsl(176, 100%, 54%);
 }
 
 .equals:active {
-  background-color: hsl(176, 100%, 29%);
+  background-color: hsl(176, 100%, 54%);
   box-shadow: 0 1px hsl(177, 92%, 70%);
 }
 
@@ -141,5 +141,132 @@ button:active {
 }
 
 .top {
-  font-size: 24px
+  font-size: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 54px;
+  height: 24px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: hsl(176, 100%, 44%);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.theme-1.slider.round:before {
+  background-color: hsl(6, 63%, 50%);;
+}
+
+input:checked + .slider {
+  background-color: hsl(268, 71%, 12%);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(30px);
+  -ms-transform: translateX(30px);
+  transform: translateX(30px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+  background-color: hsl(223, 31%, 20%);
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.theme-1 {
+  color: white;
+}
+
+.theme-1.display {
+  background-color: hsl(224, 36%, 15%);
+}
+
+.theme-1 body {
+  background-color: hsl(222, 26%, 31%);
+}
+
+.theme-1.special {
+  background-color: hsl(225, 21%, 49%);
+  box-shadow: 0 2px hsl(224, 28%, 35%);
+}
+
+.theme-1.special:hover {
+  background-color: hsl(225, 21%, 59%);
+}
+
+.theme-1.special:active {
+  background-color: hsl(225, 21%, 59%);
+  box-shadow: 0 1px hsl(224, 28%, 35%);
+}
+
+.theme-1.keypad {
+  background-color: hsl(223, 31%, 20%);
+}
+
+.theme-1.number {
+  background-color: hsl(30, 25%, 89%);
+  box-shadow: 0 2px hsl(28, 16%, 65%);
+  color: hsl(221, 14%, 31%);
+}
+
+.theme-1.number:hover {
+  background-color: hsl(30, 25%, 99%);
+}
+
+.theme-1.number:active {
+  background-color: hsl(30, 25%, 99%);
+  box-shadow: 0 1px hsl(28, 16%, 65%);
+}
+
+.theme-1.equals {
+  background-color: hsl(6, 63%, 50%);
+  box-shadow: 0 2px hsl(6, 70%, 34%);
+}
+
+.theme-1.equals:hover {
+  background-color: hsl(6, 63%, 60%);
+}
+
+.theme-1.equals:active {
+  background-color: hsl(6, 63%, 60%);
+  box-shadow: 0 1px hsl(6, 70%, 34%);
 }
