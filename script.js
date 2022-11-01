@@ -9,21 +9,46 @@ operators.forEach(operator => operator.addEventListener('click', operatorHandler
 equals.addEventListener('click', equalsHandler);
 negate.addEventListener('click', negateNumber);
 clear.addEventListener('click', clearHandler);
+window.addEventListener('keydown', keyHandler);
 
 const EQUATION_DELIMITERS = /[+×÷−]+/;
 let displayValue = '';
 let enableClearAll = false;
 
-function numberHandler() {
-    updateDisplay(displayValue + this.textContent);
+function keyHandler(e) {
+    const value = e.keyCode;
+    const key = document.querySelector(`button[data-key="${e.keyCode}"]`);
+    // backspace
+    if (value === 8) clearHandler();
+    // enter
+    else if (value === 13) equalsHandler();
+    // add (+)
+    else if (value === 187 && e.shiftKey) operatorHandler(key);
+    // sub (-)
+    else if (value === 189) operatorHandler(key);
+    // mul (x)
+    else if (value === 88) operatorHandler(key);
+    // div (/)
+    else if (value === 191) operatorHandler(key);
+    // negate (n)
+    else if (value === 78) negateNumber();
+    // numbers
+    else if (value >= 48 && value <= 57 || value === 190) numberHandler(key);
+}
+
+function numberHandler(node) {
+    if (node instanceof MouseEvent) node = this;
+    updateDisplay(displayValue + node.textContent);
     changeClearButton(false)
 }
 
-function operatorHandler() {
-    const operatorSymbol = this.textContent;
+function operatorHandler(node) {
+    if (node instanceof MouseEvent) node = this;
+    const operatorSymbol = node.textContent;
     // default behavior
     if (!operatorExists()) {
         updateDisplay(displayValue + operatorSymbol);
+        changeClearButton(false);
         return
     }
     // change operator
