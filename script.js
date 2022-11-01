@@ -13,10 +13,6 @@ clear.addEventListener('click', clearHandler);
 const EQUATION_DELIMITERS = /[+×÷−]+/;
 let displayValue = '';
 let enableClearAll = false;
-const equation = {
-    aOperand: null,
-    bOperand: null,
-};
 
 function numberHandler() {
     updateDisplay(displayValue + this.textContent);
@@ -56,7 +52,6 @@ function equalsHandler() {
     } 
     // add sign to first operand
     else if (operandExists('second') && operatorIsValid()) {
-        clearEquation();
         let tmpOperand = getOperator() === 'sub' ?
             Number(displayValue.split(EQUATION_DELIMITERS)[1] * -1) :
             Number(displayValue.split(EQUATION_DELIMITERS)[1]);
@@ -70,10 +65,7 @@ function equalsHandler() {
 
 function evaluateEquation() {
     const arr = displayValue.split(EQUATION_DELIMITERS);
-    equation.aOperand = Number(arr[0]);
-    equation.bOperand = Number(arr[1]);
-    const result = operate(getOperator(), equation.aOperand, equation.bOperand);
-    clearEquation();
+    const result = operate(getOperator(), Number(arr[0]), Number(arr[1]));
     updateDisplay(result.toString());
     if (typeof(result) === 'string') {
         displayValue = '';
@@ -92,12 +84,12 @@ function negateNumber() {
         return
     }
     else if (arrLen === 2) {
-        equation.bOperand = Number(arr[1]) * -1;
-        arr[1] = equation.bOperand.toString();
+        const tmp = Number(arr[1]) * -1;
+        arr[1] = tmp.toString();
     }
     else {
-        equation.aOperand = Number(arr[0]) * -1;
-        arr[0] = equation.aOperand.toString();
+        const tmp = Number(arr[0]) * -1;
+        arr[0] = tmp.toString();
     }
 
     displayValue = arrLen === 2 ?
@@ -162,7 +154,6 @@ function changeClearButton(option) {
 
 function clearAll() {
     updateDisplay('');
-    clearEquation();
     changeClearButton(false);
 }
 
@@ -174,14 +165,7 @@ function clearSingleEntry() {
 function generateSyntaxError() {
     updateDisplay('Syntax Error.');
     displayValue = '';
-    clearEquation();
     changeClearButton(true)
-}
-
-function clearEquation() {
-    for (key in equation) {
-        equation[key] = null;
-    }
 }
 
 function add(a, b) {
