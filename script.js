@@ -8,26 +8,25 @@ numbers.forEach(number => number.addEventListener('click', numberHandler));
 operators.forEach(operator => operator.addEventListener('click', operatorHandler));
 equals.addEventListener('click', equalsHandler);
 negate.addEventListener('click', negateNumber);
-clear.addEventListener('click', clearAll);
+clear.addEventListener('click', clearHandler);
 
 const EQUATION_DELIMITERS = /[+×÷−]+/;
 let displayValue = '';
+let enableClearAll = false;
 const equation = {
-    operator: null,
     aOperand: null,
     bOperand: null,
 };
 
 function numberHandler() {
     updateDisplay(displayValue + this.textContent);
+    changeClearButton(false)
 }
 
 function operatorHandler() {
-    const operatorType = this.classList[1];
     const operatorSymbol = this.textContent;
     // default behavior
-    if (!equation.operator) {
-        equation.operator = operatorType;
+    if (!operatorExists()) {
         updateDisplay(displayValue + operatorSymbol);
         return
     }
@@ -47,7 +46,7 @@ function operatorHandler() {
         generateSyntaxError();
         return;
     }
-    equation.operator = operatorType;
+    changeClearButton(false)
     updateDisplay(displayValue + operatorSymbol);
 }
 
@@ -57,23 +56,25 @@ function equalsHandler() {
     } 
     // add sign to first operand
     else if (operandExists('second') && operatorIsValid()) {
-        const tmp = equation.operator;
+        const tmpOperator = getOperator();
+        let tmpOperand;
         clearEquation();
-        equation.aOperand = tmp === 'sub' ?
+        tmpOperand = tmp === 'sub' ?
             Number(displayValue.split(EQUATION_DELIMITERS)[1] * -1) :
             Number(displayValue.split(EQUATION_DELIMITERS)[1]);
-        updateDisplay(equation.aOperand.toString());
+        updateDisplay(tmpOperand.toString());
     }
-    else if (operandExists('second') || operandExists('first') && equation.operator) {
+    else if (operandExists('second') || operandExists('first') && getOperator()) {
         generateSyntaxError();
     }
+    changeClearButton(true)
 }
 
 function evaluateEquation() {
     const arr = displayValue.split(EQUATION_DELIMITERS);
     equation.aOperand = Number(arr[0]);
     equation.bOperand = Number(arr[1]);
-    const result = operate(equation.operator, equation.aOperand, equation.bOperand);
+    const result = operate(getOperator(), equation.aOperand, equation.bOperand);
     clearEquation();
     equation.aOperand = result;
     updateDisplay(result.toString());
@@ -83,7 +84,7 @@ function negateNumber() {
     const operatorArr = displayValue.split(/[0-9.-]+/);
     const arr = displayValue.split(EQUATION_DELIMITERS);
     const arrLen = arr.length;
-    if (!operandExists('first') || equation.operator && !operandExists('second')) {
+    if (!operandExists('first') || getOperator() && !operandExists('second')) {
         generateSyntaxError();
         return
     }
@@ -116,19 +117,62 @@ function operandExists(option) {
     return arr[1].length > 0;
 }
 
+function operatorExists() {
+    const operatorArr = displayValue.split(/[0-9.-]+/);
+    if (operatorArr.length < 2) return false;
+    return operatorArr[1].length > 0;
+}
+
 function operatorIsValid() {
-    return equation.operator === 'add' || equation.operator === 'sub';
+    const tmpOperator = getOperator();
+    return tmpOperator === 'add' || tmpOperator === 'sub';
+}
+
+function getOperator() {
+    const operatorSymbol =  displayValue.split(/[0-9.-]+/)[1];
+    switch (operatorSymbol) {
+        case '+':
+            return 'add';
+        case '−':
+            return 'sub';
+        case '×':
+            return 'mul';
+        case '÷':
+            return 'div';
+    }
+    return false;
+}
+
+function clearHandler() {
+    if (enableClearAll) {
+        clearAll();
+    }
+    else {
+        clearSingleEntry();
+    }
+}
+
+function changeClearButton(option) {
+    enableClearAll = option;
+    clear.textContent = option ? 'CLEAR' : 'CE';
 }
 
 function clearAll() {
     updateDisplay('');
     clearEquation();
+    changeClearButton(false);
+}
+
+function clearSingleEntry() {
+    displayValue = displayValue.slice(0, -1);
+    updateDisplay(displayValue);
 }
 
 function generateSyntaxError() {
     updateDisplay('Syntax Error.');
     displayValue = '';
     clearEquation();
+    changeClearButton(true)
 }
 
 function clearEquation() {
