@@ -25,15 +25,25 @@ function numberHandler() {
 function operatorHandler() {
     const operatorType = this.classList[1];
     const operatorSymbol = this.textContent;
+    // default behavior
+    if (!equation.operator) {
+        equation.operator = operatorType;
+        updateDisplay(displayValue + operatorSymbol);
+        return
+    }
     // change operator
-    if (equation.operator && !operandExists('second')) {
+    else if (!operandExists('second')) {
         displayValue = displayValue.slice(0, -1);
     }
     // successive operations
-    else if (equation.operator && operandExists('second')) {
+    else if (operandExists('first') && operandExists('second')) {
         evaluateEquation();
     }
-    else if (equation.operator) {
+    // first operand is signed
+    else if (operatorIsValid() && !operandExists('first') && operandExists('second')) {
+        evaluateEquation();
+    }
+    else {
         generateSyntaxError();
         return;
     }
@@ -45,13 +55,17 @@ function equalsHandler() {
     if (operandExists('first') && operandExists('second')) {
         evaluateEquation();
     } 
-    else if (operandExists('first') && equation.operator) {
-        generateSyntaxError();
-    }
-    else if (!operandExists('first') && operandExists('second') && equation.operator === 'sub') {
+    // add sign to first operand
+    else if (operandExists('second') && operatorIsValid()) {
+        const tmp = equation.operator;
         clearEquation();
-        equation.aOperand = Number(displayValue.split(EQUATION_DELIMITERS)[1] * -1);
+        equation.aOperand = tmp === 'sub' ?
+            Number(displayValue.split(EQUATION_DELIMITERS)[1] * -1) :
+            Number(displayValue.split(EQUATION_DELIMITERS)[1]);
         updateDisplay(equation.aOperand.toString());
+    }
+    else if (operandExists('second') || operandExists('first') && equation.operator) {
+        generateSyntaxError();
     }
 }
 
@@ -100,6 +114,10 @@ function operandExists(option) {
     }
     if (arr.length < 2) return false;
     return arr[1].length > 0;
+}
+
+function operatorIsValid() {
+    return equation.operator === 'add' || equation.operator === 'sub';
 }
 
 function clearAll() {
