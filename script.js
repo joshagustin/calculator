@@ -56,15 +56,13 @@ function equalsHandler() {
     } 
     // add sign to first operand
     else if (operandExists('second') && operatorIsValid()) {
-        const tmpOperator = getOperator();
-        let tmpOperand;
         clearEquation();
-        tmpOperand = tmp === 'sub' ?
+        let tmpOperand = getOperator() === 'sub' ?
             Number(displayValue.split(EQUATION_DELIMITERS)[1] * -1) :
             Number(displayValue.split(EQUATION_DELIMITERS)[1]);
         updateDisplay(tmpOperand.toString());
     }
-    else if (operandExists('second') || operandExists('first') && getOperator()) {
+    else if (operandExists('second') || operandExists('first') && operatorExists()) {
         generateSyntaxError();
     }
     changeClearButton(true)
@@ -76,15 +74,20 @@ function evaluateEquation() {
     equation.bOperand = Number(arr[1]);
     const result = operate(getOperator(), equation.aOperand, equation.bOperand);
     clearEquation();
-    equation.aOperand = result;
     updateDisplay(result.toString());
+    if (typeof(result) === 'string') {
+        displayValue = '';
+    }
+    else if (isNaN(result)) {
+        generateSyntaxError()
+    }
 }
 
 function negateNumber() {
-    const operatorArr = displayValue.split(/[0-9.-]+/);
+    const operatorSymbol = displayValue[displayValue.search(EQUATION_DELIMITERS)];
     const arr = displayValue.split(EQUATION_DELIMITERS);
     const arrLen = arr.length;
-    if (!operandExists('first') || getOperator() && !operandExists('second')) {
+    if (!operandExists('first') || operatorExists() && !operandExists('second')) {
         generateSyntaxError();
         return
     }
@@ -98,7 +101,7 @@ function negateNumber() {
     }
 
     displayValue = arrLen === 2 ?
-        arr[0] + operatorArr[1] + arr[1] : arr[0];
+        arr[0] + operatorSymbol + arr[1] : arr[0];
     updateDisplay (displayValue)
 }
 
@@ -118,9 +121,8 @@ function operandExists(option) {
 }
 
 function operatorExists() {
-    const operatorArr = displayValue.split(/[0-9.-]+/);
-    if (operatorArr.length < 2) return false;
-    return operatorArr[1].length > 0;
+    const value = displayValue.search(EQUATION_DELIMITERS);
+    return value > -1;
 }
 
 function operatorIsValid() {
@@ -129,7 +131,8 @@ function operatorIsValid() {
 }
 
 function getOperator() {
-    const operatorSymbol =  displayValue.split(/[0-9.-]+/)[1];
+    const index =  displayValue.search(EQUATION_DELIMITERS);
+    const operatorSymbol = displayValue[index];
     switch (operatorSymbol) {
         case '+':
             return 'add';
@@ -213,6 +216,10 @@ function operate(operator, a, b) {
         case 'div': 
             result = divide(a, b);
             break;
+    }
+    // rounds off to 6th decimal place
+    if (!isNaN(result)) {
+        result = Math.round((result + Number.EPSILON) * 1000000) / 1000000
     }
     return result;
 }
